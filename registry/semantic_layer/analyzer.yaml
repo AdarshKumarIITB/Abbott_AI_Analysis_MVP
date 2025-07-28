@@ -1,0 +1,716 @@
+# registry/semantic_layer/analyzer.yaml
+# Define your table-level metadata and columns below.
+table: analyzer
+version: 1.0
+owner: BI-team
+description: >
+  Core metadata for the `analyzer` dataset, ingested from monthly exports.
+notes: |
+  - This dataset also called analyzer provides a consolidated view of monthly sales performance for the all the brands/products of a given division across all territories.
+  - It captures both primary (sales to distributors) and secondary (sales to retailers/customers) sales, along with related targets, claims, and returns. 
+  - It is intended for sales performance tracking, territory analysis, and brand performance review for each month and captuting poor business hygiene like large claim and return value.
+
+columns:
+  - name: Division_Code
+    type: integer
+    nullable: true
+    business_name: "Division Code"
+    business_description: "Unique identifier for the sales division."
+    example: 71
+  - name: Mth
+    type: string
+    nullable: false
+    business_name: "Month"
+    business_description: "Month of the calendar year for which the data is recorded."
+    examples:
+      - "Jan"
+      - "Feb"
+      - "Mar"
+      - "Apr"
+      - "May"
+      - "Jun"
+    special_considerations: "The 'All' value signifies a consolidated total row and should be excluded from individual month-level analysis."
+  - name: Terr_Code
+    type: string
+    nullable: true
+    business_name: "Territory Code"
+    aliases:
+      - "Territory ID"
+      - "HQ code"
+    business_description: "Code representing the sales territory code."
+    examples: 
+      - "IT021291"
+      - "PT023292"
+  - name: TBM_Name
+    type: string
+    nullable: true
+    business_name: "Territory Business Manager Name"
+    aliases:
+      - "TBM"
+    business_description: "Name of the Territory Business Manager."
+    example: "John Doe"
+    special_considerations: "This field may contain 'NOT ASSIGNED' values if no TBM is assigned."
+  - name: Employee_Code
+    type: integer
+    nullable: true
+    business_name: "Employee Code"
+    business_description: "Unique code for the employee."
+    example: 738218
+    special_considerations: "This field may contain 0 if no employee is assigned."
+  - name: Area_Code
+    type: string
+    nullable: true
+    business_name: "Area Code"
+    business_description: "To be defined."
+    example: "IA005138"
+  - name: ABM_Name
+    type: string
+    nullable: true
+    business_name: "Abm Name"
+    business_description: "To be defined."
+  - name: Zone_Code
+    type: string
+    nullable: true
+    business_name: "Zone Code"
+    business_description: "To be defined."
+  - name: ZBM_Name
+    type: string
+    nullable: true
+    business_name: "Zonal Business Manager Name"
+    aliases:
+      - "ZBM"
+    business_description: "Name of the Zonal Business Manager."
+    special_considerations: "This field may contain 'NOT ASSIGNED' values if no ZBM is assigned."
+  - name: New_ZBM_Code
+    type: string
+    nullable: true
+    business_name: "New Zbm Code"
+    business_description: "To be defined."
+  - name: New_ZBM_Name
+    type: string
+    nullable: true
+    business_name: "New Zonal Business Manager Name"
+    aliases:
+      - "New ZBM Name"
+    business_description: "Name of the new Zonal Business Manager."
+    special_considerations: "This field may contain 'NOT ASSIGNED' values if no ZBM is assigned."
+  - name: NSM_Code
+    type: string
+    nullable: true
+    business_name: "Nsm Code"
+    business_description: "To be defined."
+  - name: DH_Code
+    type: string
+    nullable: true
+    business_name: "Dh Code"
+    business_description: "To be defined."
+  - name: BH_Code
+    type: string
+    nullable: true
+    business_name: "Bh Code"
+    business_description: "To be defined."
+  - name: Master_Code
+    type: integer
+    nullable: false
+    business_name: "SKU Code"
+    aliases:
+      - "Material Code"
+    business_description: "SKU Code or Material code of the product."
+    example: 2040005117
+  - name: SKU
+    type: string
+    nullable: false
+    business_name: "SKU Name"
+    aliases:
+      - "SKU"
+    business_description: "Exact name of for the product item or SKU"
+    example: "UVOX 50 MG 10S"
+  - name: Brand
+    type: string
+    nullable: false
+    business_name: "Brand"
+    aliases:
+      - "Brand Name"
+    business_description: "Brand name of the product."
+    example: "Claribid"
+  - name: Status
+    type: string
+    nullable: true
+    business_name: "Brand category"
+    business_description: "Category of the brand. There are three categories: FOCUS, OTHERS, and New."
+    example: "FOCUS"
+    special_considerations: "Focus brands means filtering this row for FOCUS category."
+  - name: Tgt_Units
+    type: float
+    nullable: true
+    business_name: "Target Units"
+    business_description: "Target quantity in units."
+    example: 1000
+  - name: Sec_Units
+    type: float
+    nullable: true
+    business_name: "Secondary Sales Units"
+    business_description: "Actual secondary sales quantity in units"
+    example: 950
+  - name: LY_Sec_Units
+    type: float
+    nullable: true
+    business_name: "Last Year Secondary Sales Units"
+    business_description: "Last year same period Secondary sales quantity in units"
+    example: 901.23  
+  - name: Prim_Units
+    type: float
+    nullable: true
+    business_name: "Primary Sales Units"
+    business_description: "Actual primary sales quantity in units."
+    example: 800.12
+  - name: LY_Prim_Units
+    type: float
+    nullable: true
+    business_name: "Last Year Primary Sales Units"
+    business_description: "Last year same period Primary sales quantity in units"
+  - name: CY_Claim_Units
+    type: float
+    nullable: true
+    business_name: "Claim Units"
+    aliases:
+      - "Non-returnable Units"
+      - "Expired Units"
+    business_description: "Number of claim units or non-returnable units or expired units."
+  - name: LY_Claim_Units
+    type: float
+    nullable: true
+    business_name: "Last year same period Claim Units"
+    business_description: "Number of claim units or non-returnable units or expired units in the last year in the same period."
+  - name: CY_Return_Units
+    type: float
+    nullable: true
+    business_name: "Return Units"
+    business_description: "Number of return units."
+  - name: Closing_Units
+    type: float
+    nullable: true
+    business_name: "Closing Units"
+    aliases:
+      - "Closing Stock"
+    business_description: "Closing stock in units."
+  - name: Inst_Quantity
+    type: float
+    nullable: true
+    business_name: "Inst Quantity"
+    business_description: "To be defined."
+  - name: Tgt_Value
+    type: float
+    nullable: true
+    business_name: "Target Value"
+    business_description: "Target sales value."
+    example: 50000.75
+  - name: Sec_Value
+    type: float
+    nullable: true
+    business_name: "Secondary Sales Value"
+    business_description: "Actual secondary sales value."
+    example: 48000.5
+  - name: LY_Sec_Value
+    type: float
+    nullable: true
+    business_name: "Last year Secondary Sales Value"
+    business_description: "Actual secondary sales value in the last year in the same period."
+  - name: Prim_Value
+    type: float
+    nullable: true
+    business_name: "Primary Sales Value"
+    business_description: "Actual primary sales value."
+    example: 40000.0
+  - name: LY_Prim_Value
+    type: float
+    nullable: true
+    business_name: "Last year Primary Sales Value"
+    business_description: "Actual primary sales value in the last year in the same period."
+  - name: CY_Claim_Value
+    type: float
+    nullable: true
+    business_name: "Claim Value"
+    aliases:
+      - "Non-returnable Value"
+      - "Expired Value"
+    business_description: "Value of claims or non-returnable units or expired units."
+  - name: LY_Claim_Value
+    type: float
+    nullable: true
+    business_name: "Last year Claim Value"
+    business_description: "Value of claims or non-returnable units or expired units in the last year in the same period."
+  - name: CY_Return_Value
+    type: float
+    nullable: true
+    business_name: "Return Value"
+    business_description: "Value of returns or returnable units or non-expired units"
+  - name: Closing_Value
+    type: float
+    nullable: true
+    business_name: "Closing Value"
+    business_description: "Value of inventory at the end of the period."
+  - name: Inst_Value
+    type: float
+    nullable: true
+    business_name: "Inst Value"
+    business_description: "To be defined."
+  - name: Inst_TGT_QTY
+    type: float
+    nullable: true
+    business_name: "Inst Tgt Qty"
+    business_description: "To be defined."
+  - name: Inst_TGT_VALUE
+    type: float
+    nullable: true
+    business_name: "Inst Tgt Value"
+    business_description: "To be defined."
+  - name: Trade_TGT_QTY
+    type: float
+    nullable: true
+    business_name: "Trade Tgt Qty"
+    business_description: "To be defined."
+  - name: Trade_TGT_Value
+    type: float
+    nullable: true
+    business_name: "Trade Tgt Value"
+    business_description: "To be defined."
+  - name: Trade_Sales_QTY
+    type: float
+    nullable: true
+    business_name: "Trade Sales Qty"
+    business_description: "To be defined."
+  - name: Trade_Sales_Value
+    type: float
+    nullable: true
+    business_name: "Trade Sales Value"
+    business_description: "To be defined."
+  - name: Zone
+    type: string
+    nullable: true
+    business_name: "Sales Zone"
+    business_description: "Geographical sales zone."
+    example: "North"
+  - name: HQ
+    type: string
+    nullable: true
+    business_name: "Headquarter"
+    business_description: "Headquarter associated with the record."
+    example: "Mumbai"
+  - name: DEPL_S
+    type: string
+    nullable: true
+    business_name: "Depl S"
+    business_description: "To be defined."
+  - name: Status_Count
+    type: string
+    nullable: true
+    business_name: "Status Count"
+    business_description: "To be defined."
+    example: 5
+  - name: Early_Achievement
+    type: string
+    nullable: true
+    business_name: "Early Achievement"
+    business_description: "To be defined."
+  - name: PORTFOLIO_1
+    type: string
+    nullable: true
+    business_name: "Portfolio 1"
+    business_description: "To be defined."
+  - name: PORTFOLIO_2
+    type: string
+    nullable: true
+    business_name: "Portfolio 2"
+    business_description: "To be defined."
+  - name: BASE_DIVISION_CODE
+    type: string
+    nullable: true
+    business_name: "Base Division Code"
+    business_description: "To be defined."
+  - name: TEAM
+    type: string
+    nullable: true
+    business_name: "Team"
+    business_description: "To be defined."
+  - name: DEPL
+    type: string
+    nullable: true
+    business_name: "Depl"
+    business_description: "To be defined."
+  - name: DEPL_B
+    type: string
+    nullable: true
+    business_name: "Depl B"
+    business_description: "To be defined."
+  - name: DEPL_BI
+    type: string
+    nullable: true
+    business_name: "Depl Bi"
+    business_description: "To be defined."
+  - name: D_DEPL
+    type: string
+    nullable: true
+    business_name: "D Depl"
+    business_description: "To be defined."
+  - name: D_DEPL_B
+    type: string
+    nullable: true
+    business_name: "D Depl B"
+    business_description: "To be defined."
+  - name: D_DEPL_BI
+    type: string
+    nullable: true
+    business_name: "D Depl Bi"
+    business_description: "To be defined."
+
+hierarchies:
+  geographic_code:
+    name: "Geography"
+    levels:
+      - name: "Zone"
+        columns: ["Zone"]
+      - name: "Area Code"
+        columns: ["Area_Code"]
+      - name: "Territory Code"
+        columns: ["Terr_Code"]
+    relationships:
+      - parent: "Zone"  
+        child:  "Area Code"
+      - parent: "Area Code"
+        child:  "Territory Code"
+
+  product:
+    name: "Product"
+    levels:
+      - name: "Brand"
+        columns: ["Brand"]
+      - name: "SKU"
+        columns: ["Master_Code", "SKU"]
+    relationships:
+      - parent: "Brand"
+        child:  "SKU"
+
+  employee:
+    name: "Employee"
+    levels:
+      - name: "Zonal Business Manager"
+        columns: ["New_ZBM_Name","ZBM_Name"]
+      - name: "Area Business Manager"
+        columns: ["ABM_Name"]
+      - name: "Territory Business Manager"
+        columns: ["TBM_Name", "Employee_Code"]
+    relationships:
+      - parent: "Zonal Business Manager"
+        child:  "Area Business Manager"
+      - parent: "Area Business Manager"
+        child:  "Territory Business Manager"
+
+business_context:
+  defaults:
+    currency: "INR"
+    fiscal_year_start: "January"
+    default_time_window: "monthly"
+    precision:
+      monetary_values: 2
+      percentages: 1
+      quantities: 1
+    
+  metric_categories:
+    volume:
+      description: "Quantity-based metrics"
+      default_aggregation: "sum"
+      common_suffixes: ["_Units", "_Quantity", "_QTY"]
+      
+    value:
+      description: "Monetary metrics"
+      default_aggregation: "sum"
+      common_suffixes: ["_Value", "_Amount"]
+      format: "currency"
+      
+    rate:
+      description: "Percentage or ratio metrics"
+      default_aggregation: "weighted_average"
+      format: "percentage"
+  
+  standard_calculations:
+    growth:
+      name: "Growth Calculation"
+      description: "Period over period growth"
+      pattern: "comparison"
+      parameters:
+        - name: "measure"
+          description: "The value to compare"
+        - name: "current_period"
+          description: "Current time period"
+        - name: "previous_period"
+          description: "Previous time period"
+      output_type: "percentage"
+      business_rules:
+        - "Exclude 'All' month values"
+        - "Handle null as zero for calculations"
+        
+    achievement:
+      name: "Target Achievement"
+      description: "Actual vs Target comparison"
+      pattern: "ratio"
+      parameters:
+        - name: "actual"
+          description: "Actual value"
+        - name: "target"
+          description: "Target value"
+      output_type: "percentage"
+      
+    contribution:
+      name: "Contribution Analysis"
+      description: "Part to whole comparison"
+      pattern: "proportion"
+      parameters:
+        - name: "part"
+          description: "Individual component"
+        - name: "whole"
+          description: "Total value"
+      output_type: "percentage"
+      
+  business_rules:
+    data_quality:
+      - rule: "exclude_all_month"
+        description: "Exclude 'All' from month-level analysis"
+        applies_to: ["Mth"]
+        condition: "value == 'All'"
+        action: "filter_out"
+        
+      - rule: "closing_stock_non_negative"
+        description: "Closing stock should not be negative"
+        applies_to: ["Closing_Units", "Closing_Value"]
+        validation: "non_negative"
+        severity: "warning"
+        
+    aggregation_rules:
+      - rule: "hierarchy_aggregation"
+        description: "When aggregating up hierarchy, sum child values"
+        hierarchies: ["geographic_code", "product"]
+        method: "sum"
+        
+      - rule: "time_aggregation"
+        description: "When aggregating across time, handle 'All' separately"
+        applies_to: ["Mth"]
+        special_handling: "exclude_all_before_sum"
+
+    validation_rules: []
+        
+  domain_vocabulary:
+    synonyms:
+      - canonical: "growth"
+        alternatives: ["increase", "rise", "improvement", "gain"]
+      - canonical: "decline"
+        alternatives: ["decrease", "fall", "drop", "reduction"]
+      - canonical: "achievement%"
+        alternatives: ["target achievement%", "performance"]
+      - canonical: "claims"
+        alternatives: ["non-saleable returns", "expired"]
+      - canonical: "target"
+        alternatives: ["plan"]
+      - canonical: "sales"
+        alternatives: ["actuals", "primary sales", "achieved", "secondary sales"]
+        
+    time_expressions:
+      - pattern: "last month"
+        interpretation: "previous_month"
+      - pattern: "YoY"
+        interpretation: "year_over_year"
+      - pattern: "MoM"
+        interpretation: "month_over_month"
+      - pattern: "QoQ"
+        interpretation: "quarter_over_quarter"
+      - pattern: "compared to last year"
+        interpretation: "year_over_year"
+      - pattern: "YTD"
+        interpretation: "year_to_date"
+      - pattern: "MAT"
+        interpretation: "moving_annual_total"
+      - pattern: "LY"
+        interpretation: "previous_year"
+      - pattern: "PY"
+        interpretation: "previous_year"
+      - pattern: "Q1"
+        interpretation: "first_quarter"
+      - pattern: "Q2"
+        interpretation: "second_quarter"
+      - pattern: "Q3"
+        interpretation: "third_quarter"
+      - pattern: "Q4"  
+        interpretation: "fourth_quarter"
+        
+  special_column_handling:
+    Mth:
+      type: "temporal"
+      values: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec", "All"]
+      sequence_aware: true
+      special_value: 
+        value: "All"
+        meaning: "Aggregate across all months"
+        handling: "exclude_from_monthly_analysis"
+
+# New sections for metrics and mappings
+metrics:
+  achievement_pct:
+    name: "Achievement Percentage"
+    formula: "CASE WHEN Tgt_Value > 0 THEN (Prim_Value / Tgt_Value) * 100 ELSE 0 END"
+    columns_used: ["Prim_Value", "Tgt_Value"]
+    description: "Primary sales achievement against target"
+    business_rule: "Usually ranges 0-150%, flag if >200% or <50%"
+    
+  primary_achievement_pct:
+    name: "Primary Achievement Percentage"
+    formula: "CASE WHEN Tgt_Value > 0 THEN (Prim_Value / Tgt_Value) * 100 ELSE 0 END"
+    columns_used: ["Prim_Value", "Tgt_Value"]
+    description: "Primary sales achievement against target"
+    
+  yoy_growth_pct:
+    name: "Year-over-Year Growth"
+    formula: "CASE WHEN LY_Prim_Value > 0 THEN ((Prim_Value - LY_Prim_Value) / LY_Prim_Value) * 100 ELSE 0 END"
+    columns_used: ["Prim_Value", "LY_Prim_Value"]
+    description: "YoY growth in primary sales"
+    
+  secondary_yoy_growth_pct:
+    name: "Secondary YoY Growth"
+    formula: "CASE WHEN LY_Sec_Value > 0 THEN ((Sec_Value - LY_Sec_Value) / LY_Sec_Value) * 100 ELSE 0 END"
+    columns_used: ["Sec_Value", "LY_Sec_Value"]
+    description: "YoY growth in secondary sales"
+    
+  non_performance_gap:
+    name: "Non-Performance Gap"
+    formula: "Tgt_Value - Sec_Value"
+    columns_used: ["Tgt_Value", "Sec_Value"]
+    description: "Shortfall from target (positive = underachievement)"
+    
+  mom_growth_pct:
+    name: "Month-over-Month Growth"
+    formula: "LAG_FORMULA"  # Special handling needed
+    description: "Growth compared to previous month"
+    special_sql: |
+      CASE WHEN LAG(Prim_Value) OVER (PARTITION BY Zone, Brand ORDER BY 
+        CASE Mth 
+          WHEN 'Jan' THEN 1 WHEN 'Feb' THEN 2 WHEN 'Mar' THEN 3 
+          WHEN 'Apr' THEN 4 WHEN 'May' THEN 5 WHEN 'Jun' THEN 6
+          WHEN 'Jul' THEN 7 WHEN 'Aug' THEN 8 WHEN 'Sep' THEN 9
+          WHEN 'Oct' THEN 10 WHEN 'Nov' THEN 11 WHEN 'Dec' THEN 12
+        END) > 0 
+      THEN ((Prim_Value - LAG(Prim_Value) OVER (...)) / LAG(Prim_Value) OVER (...)) * 100 
+      ELSE 0 END
+
+term_mappings:
+  # Sales terms
+  "sales": 
+    ambiguous: true
+    possible_columns: ["Prim_Value", "Sec_Value"]
+    clarification: "Do you want to analyze Secondary Sales (sales to retailers) or Primary Sales (sales to distributors)?"
+  "primary sales": "Prim_Value"
+  "secondary sales": "Sec_Value"
+  "target": "Tgt_Value"
+  "plan": "Tgt_Value"
+  "achievement": "achievement_pct"
+  "achievement%": "achievement_pct"
+  "achievement percentage": "achievement_pct"
+  
+  # Time terms
+  "last year": "LY_prefix"
+  "previous year": "LY_prefix"
+  "yoy": "yoy_growth_pct"
+  "year over year": "yoy_growth_pct"
+  "mom": "mom_growth_pct"
+  "month over month": "mom_growth_pct"
+  
+  # Geographic terms
+  "geography": "Zone"
+  "region": "Zone"
+  "area": "Area_Code"
+  "territory": "Terr_Code"
+  "hq": "Terr_Code"
+  
+  # Product terms
+  "product": "Brand"
+  "brands": "Brand"
+  "sku": "SKU"
+  
+  # Performance terms
+  "underperformance": "non_performance_gap"
+  "underperforming": 
+    calculation: "achievement_pct < 100"
+    description: "Brands/zones not meeting target"
+  "overachievement": 
+    calculation: "achievement_pct > 100"
+  "growth": "yoy_growth_pct"
+  "degrowth": 
+    calculation: "yoy_growth_pct < 0"
+    description: "Negative growth"
+  "de-growth": 
+    calculation: "yoy_growth_pct < 0"
+    
+  # Filter terms
+  "focus brands":
+    filter: 
+      Status: "FOCUS"
+  "top":
+    order: "DESC"
+    limit: true
+  "bottom":
+    order: "ASC"
+    limit: true
+
+query_patterns:
+  underperformance_analysis:
+    name: "Underperformance Analysis"
+    description: "Find entities not meeting targets"
+    metrics: ["achievement_pct", "non_performance_gap"]
+    typical_dimensions: 
+      geographic: ["Zone", "Area_Code", "Terr_Code"]
+      product: ["Brand", "SKU"]
+      employee: ["ZBM_Name", "ABM_Name", "TBM_Name"]
+    filters:
+      - "achievement_pct < 100"
+    sort: "non_performance_gap DESC"
+    
+  growth_analysis:
+    name: "Growth Analysis"
+    description: "Analyze YoY or MoM growth"
+    metrics: ["yoy_growth_pct", "Prim_Value", "LY_Prim_Value"]
+    typical_dimensions:
+      geographic: ["Zone", "Area_Code", "Terr_Code"]
+      product: ["Brand", "SKU"]
+      
+  top_bottom_analysis:
+    name: "Top/Bottom Performers"
+    description: "Identify best or worst performing entities"
+    metrics: ["achievement_pct", "Sec_Value"]
+    requires_limit: true
+    typical_dimensions:
+      geographic: ["Zone", "Area_Code", "Terr_Code"]
+      product: ["Brand", "SKU"]
+      employee: ["TBM_Name"]
+    
+  contribution_analysis:
+    name: "Contribution Analysis"
+    description: "Analyze share of total"
+    calculation: "(entity_value / SUM(entity_value) OVER ()) * 100"
+    typical_dimensions:
+      geographic: ["Zone"]
+      product: ["Brand"]
+
+business_rules:
+  always_exclude_all_month:
+    description: "Exclude 'All' from month-level analysis unless specifically requested"
+    sql: "WHERE Mth != 'All'"
+    
+  month_ordering:
+    description: "Months must be ordered correctly"
+    sequence: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+    
+  default_achievement_metric:
+    description: "When user says 'achievement' without qualifier, assume secondary sales"
+    default: "achievement_pct"
+    
+  null_handling:
+    description: "Handle NULL values in calculations"
+    approach: "Use COALESCE or CASE statements"

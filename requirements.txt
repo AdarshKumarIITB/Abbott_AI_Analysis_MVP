@@ -1,0 +1,14 @@
+python-dotenv
+typer[all]
+rich
+duckdb
+pandas
+pyyaml
+openpyxl
+xlrd
+pyxlsb
+langchain
+openai
+pydantic
+rich
+pydantic_settings

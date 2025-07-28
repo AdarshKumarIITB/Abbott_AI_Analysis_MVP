@@ -1,0 +1,52 @@
+{
+    "original_intent": "In delhi zone, which brands didn't perform this month?",
+    "clarifier_exchange": [
+        {
+            "agent_prompt": "Could you specify the month you are referring to as 'this month'?",
+            "user_reply": "Month is april. Non performance is anything below 100% achievement. Change granularity to terr_code level."
+        }
+    ],
+    "runtime_context": {
+        "resolved_month": "Apr"
+    },
+    "query": {
+        "table": "analyzer",
+        "select": [
+            "Terr_Code",
+            "Brand"
+        ],
+        "metrics": [
+            "non_performance_gap",
+            "achievement_pct"
+        ],
+        "where": [
+            {
+                "column": "Mth",
+                "operator": "=",
+                "value": "Apr"
+            },
+            {
+                "column": "Zone",
+                "operator": "=",
+                "value": "DELHI"
+            }
+        ],
+        "group_by": [
+            "Terr_Code",
+            "Brand"
+        ],
+        "having": [
+            {
+                "metric": "achievement_pct",
+                "operator": "<",
+                "value": 100
+            }
+        ],
+        "order_by": [
+            {
+                "metric": "non_performance_gap",
+                "direction": "DESC"
+            }
+        ]
+    }
+}
