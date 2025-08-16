@@ -179,27 +179,62 @@ class AbbottSQLAgent:
         intermediate_steps = result.get('intermediate_steps', [])
         print(f"DEBUG: Found {len(intermediate_steps)} intermediate steps")
         
-        for step in intermediate_steps:
-           if len(step) >= 2:
+        # Keep track of the last SQL query found
+        last_sql = None
+        
+        for i, step in enumerate(intermediate_steps):
+            if len(step) >= 2:
                 action = step[0]
                 result_text = step[1]
                 
-                # Check if this step executed SQL
-                if hasattr(action, 'tool') and 'sql' in action.tool.lower():
-                    # Extract SQL from the action input
-                    if hasattr(action, 'tool_input'):
-                        sql = action.tool_input
-                        if isinstance(sql, dict):
-                            sql = sql.get('query', sql.get('input', ''))
-                        return sql
+                # Debug print
+                if hasattr(action, 'tool'):
+                    print(f"DEBUG: Step {i} - Tool: {action.tool}")
+                
+                # Check various SQL-related tools
+                if hasattr(action, 'tool'):
+                    tool_name = action.tool.lower()
+                    if any(sql_tool in tool_name for sql_tool in ['sql', 'query', 'database']):
+                        if hasattr(action, 'tool_input'):
+                            tool_input = action.tool_input
+                            
+                            # Handle different input formats
+                            if isinstance(tool_input, str):
+                                # Direct SQL string
+                                if tool_input.strip():
+                                    last_sql = tool_input.strip()
+                                    print(f"DEBUG: Found SQL in step {i}: {last_sql[:100]}...")
+                            elif isinstance(tool_input, dict):
+                                # Dictionary with query key
+                                for key in ['query', 'sql', 'input', 'sql_query']:
+                                    if key in tool_input and tool_input[key]:
+                                        last_sql = tool_input[key].strip()
+                                        print(f"DEBUG: Found SQL in step {i} under key '{key}': {last_sql[:100]}...")
+                                        break
+        
+        # If we found SQL in intermediate steps, return it
+        if last_sql:
+            return last_sql
         
         # Fallback: try to extract SQL from output using regex
         output = result.get('output', '')
-        sql_pattern = r'```sql\n(.*?)\n```'
-        matches = re.findall(sql_pattern, output, re.DOTALL)
-        if matches:
-            print(f"DEBUG: SQL from regex: {matches[0]}")
-            return matches[0]
+        
+        # Try different SQL block patterns
+        patterns = [
+            r'```sql\n(.*?)\n```',
+            r'```SQL\n(.*?)\n```',
+            r'```\n(SELECT.*?)\n```',
+            r'SQL:\n(.*?)(?:\n\n|\Z)',
+            r'query:\s*["\']?(SELECT.*?)["\']\s*[,}]'
+        ]
+        
+        for pattern in patterns:
+            matches = re.findall(pattern, output, re.DOTALL | re.IGNORECASE)
+            if matches:
+                sql = matches[-1].strip()  # Get the last match
+                print(f"DEBUG: SQL extracted from output using pattern: {sql[:100]}...")
+                return sql
+        
         print("DEBUG: No SQL found in result")
         return None
     

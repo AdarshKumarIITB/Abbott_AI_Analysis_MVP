@@ -1,5 +1,17 @@
 from langchain_core.prompts import PromptTemplate
 from typing import List, Dict, Any
+import re
+
+def escape_template_vars(text: str) -> str:
+    """
+    Escape single curly braces to prevent them from being interpreted as template variables.
+    This is needed when including YAML content that has dictionary representations.
+    """
+    # Replace single { and } with double {{ and }} to escape them
+    # But be careful not to escape already escaped ones or the template variables
+    text = re.sub(r'(?<!\{)\{(?!\{)', '{{', text)
+    text = re.sub(r'(?<!\})\}(?!\})', '}}', text)
+    return text
 
 def get_abbott_sql_prompt(examples: List[Dict[str, str]], schema_adapter: Any) -> PromptTemplate:
     """
@@ -21,6 +33,15 @@ def get_abbott_sql_prompt(examples: List[Dict[str, str]], schema_adapter: Any) -
     # Extract business context and metrics from the schema
     business_context = schema_adapter.get_business_context()
     metrics = schema_adapter.get_metrics_definitions()
+    hierarchies = schema_adapter.get_hierarchies()
+    
+    # Get table information - this includes column descriptions
+    table_info = schema_adapter.get_custom_table_info()
+    table_name = schema_adapter.get_table_name()
+    table_description = table_info.get(table_name, "No table description available")
+    
+    # Escape the table description to avoid template variable conflicts
+    table_description = escape_template_vars(table_description)
     
     # Format examples for inclusion in prompt
     formatted_examples = ""
@@ -31,8 +52,22 @@ Question: {example['question']}
 SQL: {example['query']}
 """
     
+    # Format hierarchies
+    hierarchy_info = ""
+    for name, hierarchy in hierarchies.items():
+        if 'relationships' in hierarchy:
+            hierarchy_info += f"\n{hierarchy.get('name', name)} Hierarchy:\n"
+            for rel in hierarchy['relationships']:
+                hierarchy_info += f"  - {rel.get('parent', '')} → {rel.get('child', '')}\n"
+    
     # Create the complete prompt template with required variables
     template = f"""You are an Abbott India sales analytics assistant with expertise in pharmaceutical sales data.
+
+DATABASE SCHEMA AND CONTEXT:
+{table_description}
+
+HIERARCHIES:
+{hierarchy_info}
 
 CRITICAL RULES:
 1. ALWAYS exclude Mth = 'All' unless specifically requested for totals
@@ -57,7 +92,7 @@ AVAILABLE CALCULATED METRICS:
 Here are some examples of questions and their corresponding SQL queries:
 {formatted_examples}
 
-You have access to tools to answer the question. Use them as needed.
+You have access to tools to answer the question. Use them if needed.
 
 Question: {{input}}
 {{agent_scratchpad}}"""
